@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using SFB;
+using TMPro;
 //uusing UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,9 @@ public class ShadingMapBaker : MonoBehaviour
     public Button saveShadingMap;
     public Button saveAlbedoMap;
 
+    public TMP_InputField ResolutionXField;
+    public TMP_InputField ResolutionYField;
+
     private void Start()
     {
         saveShadingMap.onClick.AddListener(delegate
@@ -55,24 +59,30 @@ public class ShadingMapBaker : MonoBehaviour
             //AssetDatabase.Refresh();
         });
 
-         saveAlbedoMap.onClick.AddListener(delegate
-        {
-            Texture2D texture = new Texture2D(Resolution.x, Resolution.y);
-            RenderTexture.active = opacityMapRT;
-            texture.ReadPixels(new Rect(Vector2.zero, Resolution), 0, 0);
+        saveAlbedoMap.onClick.AddListener(delegate
+       {
+           Texture2D texture = new Texture2D(Resolution.x, Resolution.y);
+           RenderTexture.active = opacityMapRT;
+           texture.ReadPixels(new Rect(Vector2.zero, Resolution), 0, 0);
 
-            var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "Albedo", "png");
+           var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "Albedo", "png");
 
             //save texture to file
             byte[] png = texture.EncodeToPNG();
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
-            File.WriteAllBytes(path, png);
+           if (File.Exists(path))
+           {
+               File.Delete(path);
+           }
+           File.WriteAllBytes(path, png);
 
             //AssetDatabase.Refresh();
         });
+
+        ResolutionXField.text = Resolution.x.ToString();
+        ResolutionYField.text = Resolution.y.ToString();
+
+        ResolutionXField.onValueChanged.AddListener(delegate { Resolution.x = int.Parse(ResolutionXField.text); });
+        ResolutionYField.onValueChanged.AddListener(delegate { Resolution.y = int.Parse(ResolutionYField.text); });
     }
 
     [ContextMenu("ADDT")]
@@ -131,7 +141,7 @@ public class ShadingMapBaker : MonoBehaviour
                 break;
         }
 
-        if (id<=3)
+        if (id <= 3)
         {
             RenderShadingMap();
             saveShadingMap.gameObject.SetActive(true);
@@ -148,16 +158,16 @@ public class ShadingMapBaker : MonoBehaviour
 
     private void RenderOpacityMap()
     {
-         opacityMapRT = RenderTexture.GetTemporary(Resolution.x, Resolution.y);
+        opacityMapRT = RenderTexture.GetTemporary(Resolution.x, Resolution.y);
         Graphics.Blit(null, opacityMapRT, albedoBakingMat);
 
         previewMat.SetTexture("_Albedo", opacityMapRT);
 
         //transfer image from rendertexture to texture
 
-       // Texture2D texture = new Texture2D(Resolution.x, Resolution.y);
-       // RenderTexture.active = opacityMapRT;
-       // texture.ReadPixels(new Rect(Vector2.zero, Resolution), 0, 0);
+        // Texture2D texture = new Texture2D(Resolution.x, Resolution.y);
+        // RenderTexture.active = opacityMapRT;
+        // texture.ReadPixels(new Rect(Vector2.zero, Resolution), 0, 0);
         albedoOutPrev.texture = opacityMapRT;
     }
 
@@ -181,9 +191,9 @@ public class ShadingMapBaker : MonoBehaviour
 
         //transfer image from rendertexture to texture
 
-      //  Texture2D texture = new Texture2D(Resolution.x, Resolution.y);
-     //   RenderTexture.active = shadingMapRT;
-      //  texture.ReadPixels(new Rect(Vector2.zero, Resolution), 0, 0);
+        //  Texture2D texture = new Texture2D(Resolution.x, Resolution.y);
+        //   RenderTexture.active = shadingMapRT;
+        //  texture.ReadPixels(new Rect(Vector2.zero, Resolution), 0, 0);
         PBR_outPrev.texture = shadingMapRT;
 
         //out_prev.sprite = texture.createSprite();

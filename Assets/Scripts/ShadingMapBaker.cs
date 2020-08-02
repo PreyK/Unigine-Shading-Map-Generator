@@ -97,6 +97,9 @@ public class ShadingMapBaker : MonoBehaviour
         var data = System.IO.File.ReadAllBytes(path);
         var t = new Texture2D(1, 1);
         t.LoadImage(data);
+
+        Resolution.x = t.width;
+        Resolution.y = t.height;
         switch (id)
         {
             case 0:

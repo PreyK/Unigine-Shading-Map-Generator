@@ -34,13 +34,18 @@ public class ShadingMapBaker : MonoBehaviour
     public Button saveShadingMap;
     public Button saveAlbedoMap;
 
+    int r;
+
     private void Start()
     {
+        r = UnityEngine.Random.Range(1, 99);
+        
         saveShadingMap.onClick.AddListener(delegate
         {
             Texture2D texture = new Texture2D(Resolution.x, Resolution.y);
             RenderTexture.active = shadingMapRT;
             texture.ReadPixels(new Rect(Vector2.zero, Resolution), 0, 0);
+            
 
             var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "Shade", "png");
 
@@ -51,7 +56,7 @@ public class ShadingMapBaker : MonoBehaviour
                 File.Delete(path);
             }
             File.WriteAllBytes(path, png);
-
+            
             //AssetDatabase.Refresh();
         });
 
@@ -98,8 +103,7 @@ public class ShadingMapBaker : MonoBehaviour
         var t = new Texture2D(1, 1);
         t.LoadImage(data);
 
-        Resolution.x = t.width;
-        Resolution.y = t.height;
+        SetFinalTextureResolution(t);
         switch (id)
         {
             case 0:

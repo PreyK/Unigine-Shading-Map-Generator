@@ -9,6 +9,7 @@ public class GithubLink : MonoBehaviour
     {
         GetComponent<Button>().onClick.AddListener(delegate
         {
+            
             Application.OpenURL(url);
         });
     }
